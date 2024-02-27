@@ -1,0 +1,4 @@
+output
+files/rootfs/*
+!/files/rootfs/jammy/.init
+!/files/rootfs/noble/.init

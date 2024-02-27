@@ -1,0 +1,15 @@
+#!/bin/bash
+
+forks() {
+		sleep 8
+		if grep -q 1 "/sys/class/switch/dp/state"; then
+				xrandr --output DSI-0 --off --output DP-0 --primary --auto
+		else
+				xrandr --output DP-0 --off --output DSI-0 --primary --mode 720x1280 --rotate left --panning 1280x720+0+0 --pos 0x0 --dpi 120 --fb 1280x720
+		fi
+		feh --bg-fill --no-fehbg /usr/share/backgrounds/warty-final-ubuntu.png
+		xinput set-prop "touchscreen" --type=float "Coordinate Transformation Matrix" 0 -1 1 1 0 0 0 0 1
+}
+
+forks&
+disown
