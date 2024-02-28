@@ -1,4 +1,5 @@
 output
-files/rootfs/*
-!/files/rootfs/jammy/.init
-!/files/rootfs/noble/.init
+files/rootfs/jammy/*
+files/rootfs/noble/*
+!/files/rootfs/jammy/.gitkeep
+!/files/rootfs/noble/.gitkeep
