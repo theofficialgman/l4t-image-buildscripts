@@ -25,7 +25,7 @@ status_green() { #announce the success of a major action
 
 # move to current script directory regardless of where the script was run from
 cd `dirname $0` || exit 1
-cd ../output
+cd ../output || error "Failed to move to output directory"
 
 status "Creating empty image"
 sync
@@ -50,7 +50,7 @@ sync
 mount l4t.ext4.img mounted_ext4/
 status "Copying files"
 sync
-cp -a rootfs/* mounted_ext4/ && sync
+cp -a rootfs/* mounted_ext4/ || error "Failed to copy rootfs to mount"
 sync
 umount mounted_ext4
 status "Cleaning up free space"
@@ -60,4 +60,19 @@ status "Spliting image"
 split -b4290772992 --numeric-suffixes=0 "l4t.ext4.img" "l4t."
 #rm -f l4t.ext4.img
 sync
+
+distro_name=$(echo "$1" | awk -F- '{print $NF}')
+status "Creating L4T-$distro_name-image.7z"
+rm -rf L4T-image
+sudo -u "$SUDO_USER" mkdir L4T-image
+cd L4T-image
+sudo -u "$SUDO_USER" mkdir -p bootloader/ini switchroot/install switchroot/ubuntu-$distro_name
+sudo -u "$SUDO_USER" cp ../rootfs/opt/switchroot/bootstack/* switchroot/ubuntu-$distro_name/ || error "Failed to copy bootfiles"
+sudo -u "$SUDO_USER" cp ../rootfs/opt/switchroot/L4T-$distro_name.ini bootloader/ini/ || error "Failed to copy boot .ini"
+sudo -u "$SUDO_USER" mv ../l4t.0* switchroot/install/ || error "Failed to copy image files"
+chown -R "$SUDO_USER":"$SUDO_USER" ./*
+sync
+sudo -u "$SUDO_USER" 7z a ../"L4T-$distro_name-image.7z" ./* || error "Failed to create L4T-$distro_name-image.7z"
+
+
 status_green "Image creation finished!"

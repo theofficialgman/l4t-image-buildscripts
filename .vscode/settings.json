@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "output": true
+    },
+    "python.analysis.enablePytestSupport": true,
+    "python.analysis.exclude": [
+        "output"
+    ]
+}
