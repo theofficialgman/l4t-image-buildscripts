@@ -1,5 +1,28 @@
 #!/bin/bash
 
+error() { #red text and exit 1
+  echo -e "\e[91m$1\e[0m" 1>&2
+  exit 1
+}
+
+warning() { #yellow text
+  echo -e "\e[93m\e[5m◢◣\e[25m WARNING: $1\e[0m" 1>&2
+}
+
+status() { #cyan text to indicate what is happening
+  
+  #detect if a flag was passed, and if so, pass it on to the echo command
+  if [[ "$1" == '-'* ]] && [ ! -z "$2" ];then
+    echo -e $1 "\e[96m$2\e[0m" 1>&2
+  else
+    echo -e "\e[96m$1\e[0m" 1>&2
+  fi
+}
+
+status_green() { #announce the success of a major action
+  echo -e "\e[92m$1\e[0m" 1>&2
+}
+
 # move to current script directory regardless of where the script was run from
 cd `dirname $0` || exit 1
 SCRIPTS_DIR="$(pwd)"
@@ -9,32 +32,32 @@ ROOT_DIR="$(pwd)"
 mkdir -p output
 cd output || exit 1
 OUTPUT_DIR="$(pwd)"
-echo ---- Removing old rootfs
+status "Removing old rootfs"
 sync
 sudo rm -rf rootfs
 sync
-echo ---- Extracting rootfs
+status "Extracting rootfs"
 if [[ "$1" == "kde-jammy" ]]; then
   export IMAGE_TYPE=kde-jammy
-  echo "KDE Ubuntu Jammy image creation selected."
+  status "KDE Ubuntu Jammy image creation selected."
 elif [[ "$1" == "kde-noble" ]]; then
   export IMAGE_TYPE=kde-noble
-  echo "KDE Ubuntu Noble image creation selected."
+  status "KDE Ubuntu Noble image creation selected."
 elif [[ "$1" == "gnome-jammy" ]]; then
   export IMAGE_TYPE=gnome-jammy
-  echo "GNOME Ubuntu Jammy image creation selected."
+  status "GNOME Ubuntu Jammy image creation selected."
 elif [[ "$1" == "gnome-noble" ]]; then
   export IMAGE_TYPE=gnome-noble
-  echo "GNOME Ubuntu Noble image creation selected."
+  status "GNOME Ubuntu Noble image creation selected."
 elif [[ "$1" == "unity-noble" ]]; then
   export IMAGE_TYPE=unity-noble
-  echo "Ubuntu Unity Noble image creation selected."
+  status "Ubuntu Unity Noble image creation selected."
 elif [[ "$1" == "experiment" ]]; then
   export IMAGE_TYPE=experiment
-  echo "experiment image creation selected."
+  status "experiment image creation selected."
 else
   export IMAGE_TYPE=gnome-jammy
-  echo "No option specified, defaulting to GNOME image creation."
+  status "No option specified, defaulting to GNOME image creation."
 fi
 
 case "$IMAGE_TYPE" in
@@ -67,15 +90,14 @@ gnome-noble)
 # gnome
 rm -rf /tmp/rootfs-mount
 mkdir -p /tmp/rootfs-mount
-loopdev=$(sudo losetup -f --show -P ../files/rootfs/noble-preinstalled-desktop-arm64+raspi.img)
+loopdev=$(sudo losetup -f --show -P ../files/rootfs/noble/noble-preinstalled-desktop-arm64+raspi.img)
 sudo mount ${loopdev}p2 /tmp/rootfs-mount
 sudo cp -rp /tmp/rootfs-mount rootfs
 sudo umount /tmp/rootfs-mount
 sudo losetup -d ${loopdev}
 ;;
 *)
-echo "No image for specified input $IMAGE_TYPE"
-exit 1
+error "No image for specified input $IMAGE_TYPE"
 ;;
 esac
 
@@ -84,14 +106,12 @@ sudo mkdir -p opt
 sudo mkdir -p opt/switchroot
 sudo touch opt/switchroot/image_prep
 cd ..
-echo ---- Applying BSP
+status "Applying BSP"
 sync
 sudo "$SCRIPTS_DIR"/apply_binaries.sh -i "$IMAGE_TYPE" || exit $?
 cd ..
 
-echo 
-echo 
-echo ---- Applying Switchroot customizations
+status "Applying Switchroot customizations"
 
 #first boot script customizations
 sudo mkdir -p "$OUTPUT_DIR"/rootfs/usr/lib/ubiquity/dm-scripts/oem
@@ -105,7 +125,7 @@ sudo cp "$ROOT_DIR"/files/overwrite-files/custom.conf "$OUTPUT_DIR"/rootfs/etc/g
 sudo ln -s /lib/systemd/system/iio-sensor-proxy.service "$OUTPUT_DIR"/rootfs/etc/systemd/system/multi-user.target.wants/iio-sensor-proxy.service
 
 #FIXME: go through this list
-echo ---- Cleaning up unneeded files in the image
+status "Cleaning up unneeded files in the image"
 sudo rm "$OUTPUT_DIR"/rootfs/etc/skel/Desktop/nv_devzone.desktop
 sudo rm "$OUTPUT_DIR"/rootfs/etc/skel/Desktop/nv_forums.desktop
 sudo rm "$OUTPUT_DIR"/rootfs/etc/skel/Desktop/nv_jetson_zoo.desktop

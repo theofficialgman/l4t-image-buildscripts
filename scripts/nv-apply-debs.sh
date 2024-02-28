@@ -31,6 +31,29 @@
 # pointed to by L4T_ROOTFS_DIR/opt/nvidia/l4t-packages.
 #
 
+error() { #red text and exit 1
+  echo -e "\e[91m$1\e[0m" 1>&2
+  exit 1
+}
+
+warning() { #yellow text
+  echo -e "\e[93m\e[5m◢◣\e[25m WARNING: $1\e[0m" 1>&2
+}
+
+status() { #cyan text to indicate what is happening
+  
+  #detect if a flag was passed, and if so, pass it on to the echo command
+  if [[ "$1" == '-'* ]] && [ ! -z "$2" ];then
+    echo -e $1 "\e[96m$2\e[0m" 1>&2
+  else
+    echo -e "\e[96m$1\e[0m" 1>&2
+  fi
+}
+
+status_green() { #announce the success of a major action
+  echo -e "\e[92m$1\e[0m" 1>&2
+}
+
 set -e
 
 # show the usages text
@@ -114,14 +137,14 @@ if [ -z "$L4T_ROOTFS_DIR" ]; then
 	L4T_ROOTFS_DIR="${ROOT_DIR}/output/rootfs"
 fi
 
-echo "Root file system directory is ${L4T_ROOTFS_DIR}"
+status "Root file system directory is ${L4T_ROOTFS_DIR}"
 
 # dir on target rootfs to keep Debian packages prior to installation
 L4T_TARGET_DEB_DIR="/opt/nvidia/l4t-packages"
 L4T_ROOTFS_DEB_DIR="${L4T_ROOTFS_DIR}${L4T_TARGET_DEB_DIR}"
 
 # copy debian packages and installation script to rootfs
-echo "Copying public debian packages to rootfs"
+status "Copying public debian packages to rootfs"
 mkdir -p "${L4T_ROOTFS_DEB_DIR}/userspace"
 mkdir -p "${L4T_ROOTFS_DEB_DIR}/kernel"
 mkdir -p "${L4T_ROOTFS_DEB_DIR}/bootloader"
@@ -146,7 +169,7 @@ AddDebsList "userspace"
 # fi
 
 
-echo "Start L4T BSP package installation"
+status "Start L4T BSP package installation"
 # Try the stashed copy which should be packed in customer_release.tbz2 first
 if [ -f "${L4T_DIR}/../qemu-aarch64-static" ]; then
 	QEMU_BIN="${L4T_DIR}/../qemu-aarch64-static"
@@ -198,12 +221,12 @@ sudo cp -b /etc/resolv.conf "${L4T_ROOTFS_DIR}/etc/resolv.conf"
 # echo "Removing Switchroot OTA server key from rootfs"
 # rm -f "${L4T_ROOTFS_DIR}/etc/apt/switchroot.key"
 
-echo "Installing theofficialgman-L4T OTA server key in rootfs"
+status "Installing theofficialgman-L4T OTA server key in rootfs"
 install --owner=root --group=root \
 	"${ROOT_DIR}/files/repo/theofficialgman-L4T.key" \
 	"${L4T_ROOTFS_DIR}/etc/apt/keyrings/theofficialgman-L4T.asc"
 pushd "${L4T_ROOTFS_DIR}"
-echo "Registering theofficialgman-L4T OTA server key"
+status "Registering theofficialgman-L4T OTA server key"
 case "$IMAGE_TYPE" in
 *-jammy)
 echo "deb [signed-by=/etc/apt/keyrings/theofficialgman-L4T.asc] https://theofficialgman.github.io/l4t-debs/ l4t jammy" > "${L4T_ROOTFS_DIR}/etc/apt/sources.list.d/theofficialgman-L4T.list"
@@ -214,8 +237,7 @@ echo "deb [signed-by=/etc/apt/keyrings/theofficialgman-L4T.asc] https://theoffic
 echo "deb [signed-by=/etc/apt/keyrings/theofficialgman-L4T.asc] https://theofficialgman.github.io/l4t-debs/ l4t noble" > "${L4T_ROOTFS_DIR}/etc/apt/sources.list.d/theofficialgman-L4T.list"
 ;;
 *)
-echo "No apt repo for specified input $IMAGE_TYPE"
-exit 1
+error "No apt repo for specified input $IMAGE_TYPE"
 ;;
 esac
 popd
@@ -226,7 +248,7 @@ touch "${L4T_ROOTFS_DEB_DIR}/.nv-l4t-disable-boot-fw-update-in-preinstall"
 LC_ALL=C chroot . rm -f /var/lib/dbus/machine-id
 LC_ALL=C chroot . truncate --size 0 /etc/machine-id
 
-echo "Removing packages"
+status "Removing packages"
 # openbox openbox-menu libmenu-cache3 libobt2v5 libimlib2 libobrender32v5 libfm-extra4 libgif7 libid3tag0 libmenu-cache-bin 
 LC_ALL=C chroot . dpkg --purge  fwupd-signed fwupdate fwupdate-signed
 LC_ALL=C chroot . dpkg --remove fwupd
@@ -251,7 +273,7 @@ LC_ALL=C chroot . apt purge --autoremove -y linux-image-*-raspi linux-modules-*-
 esac
 umount ${L4T_ROOTFS_DIR}/proc
 
-echo "Fully upgrade image and install additional dependencies from ubuntu repos"
+status "Fully upgrade image and install additional dependencies from ubuntu repos"
 LC_ALL=C chroot . mount -t proc none /proc
 mount /sys ./sys -o bind
 mount /dev ./dev -o bind
@@ -333,5 +355,5 @@ sudo mv "${L4T_ROOTFS_DIR}/etc/resolv.conf.backup" "${L4T_ROOTFS_DIR}/etc/resolv
 echo "Removing stashed Debian packages from rootfs"
 rm -rf "${L4T_ROOTFS_DEB_DIR}"
 
-echo "L4T BSP package installation completed!"
+status_green "L4T BSP package installation completed!"
 exit 0

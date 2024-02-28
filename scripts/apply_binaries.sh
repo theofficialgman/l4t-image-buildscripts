@@ -32,6 +32,29 @@
 # LDK_ROOTFS_DIR variable.
 #
 
+error() { #red text and exit 1
+  echo -e "\e[91m$1\e[0m" 1>&2
+  exit 1
+}
+
+warning() { #yellow text
+  echo -e "\e[93m\e[5m◢◣\e[25m WARNING: $1\e[0m" 1>&2
+}
+
+status() { #cyan text to indicate what is happening
+  
+  #detect if a flag was passed, and if so, pass it on to the echo command
+  if [[ "$1" == '-'* ]] && [ ! -z "$2" ];then
+    echo -e $1 "\e[96m$2\e[0m" 1>&2
+  else
+    echo -e "\e[96m$1\e[0m" 1>&2
+  fi
+}
+
+status_green() { #announce the success of a major action
+  echo -e "\e[92m$1\e[0m" 1>&2
+}
+
 set -e
 
 # show the usages text
@@ -154,7 +177,7 @@ if [ ! -f "${ROOT_DIR}/scripts/${DEB_SCRIPT_NAME}" ]; then
 	echo "Debian script ${ROOT_DIR}/scripts/${DEB_SCRIPT_NAME} not found"
 	exit 1
 fi
-echo "Running: ${ROOT_DIR}/scripts/${DEB_SCRIPT_NAME} -r ${LDK_ROOTFS_DIR} -i ${IMAGE_TYPE}"
+status "Running: ${ROOT_DIR}/scripts/${DEB_SCRIPT_NAME} -r ${LDK_ROOTFS_DIR} -i ${IMAGE_TYPE}"
 "${ROOT_DIR}/scripts/${DEB_SCRIPT_NAME}" -r ${LDK_ROOTFS_DIR} -i ${IMAGE_TYPE}
 
 ARM_ABI_DIR=
@@ -272,4 +295,4 @@ if [ "${DEBUG}" == "true" ]; then
 	TOTAL_TIME=$((${END_TIME}-${START_TIME}))
 	echo "Time for applying binaries - $(date -d@${TOTAL_TIME} -u +%H:%M:%S)"
 fi
-echo "Success!"
+status_green "Nvidia Customizations Applied!"
