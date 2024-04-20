@@ -245,9 +245,6 @@ popd
 pushd "${L4T_ROOTFS_DIR}"
 touch "${L4T_ROOTFS_DEB_DIR}/.nv-l4t-disable-boot-fw-update-in-preinstall"
 
-LC_ALL=C chroot . rm -f /var/lib/dbus/machine-id
-LC_ALL=C chroot . truncate --size 0 /etc/machine-id
-
 status "Removing packages"
 # openbox openbox-menu libmenu-cache3 libobt2v5 libimlib2 libobrender32v5 libfm-extra4 libgif7 libid3tag0 libmenu-cache-bin 
 LC_ALL=C chroot . dpkg --purge  fwupd-signed fwupdate fwupdate-signed
@@ -343,6 +340,11 @@ umount ${L4T_ROOTFS_DIR}/proc
 LC_ALL=C chroot . dpkg --unpack --path-include="/usr/share/doc/*" "${unpack_deb_list[@]}"
 
 rm -f "${L4T_ROOTFS_DEB_DIR}/.nv-l4t-disable-boot-fw-update-in-preinstall"
+
+# remove machine-id to be generated on first boot
+LC_ALL=C chroot . rm -f /var/lib/dbus/machine-id
+LC_ALL=C chroot . truncate --size 0 /etc/machine-id
+
 popd
 
 echo "Removing QEMU binary from rootfs"
