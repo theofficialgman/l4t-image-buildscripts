@@ -222,11 +222,21 @@ sudo cp -b /etc/resolv.conf "${L4T_ROOTFS_DIR}/etc/resolv.conf"
 # rm -f "${L4T_ROOTFS_DIR}/etc/apt/switchroot.key"
 
 status "Installing theofficialgman-L4T OTA server key in rootfs"
-install --owner=root --group=root \
+install --owner=root --group=root --mode=644 \
 	"${ROOT_DIR}/files/repo/theofficialgman-L4T.key" \
 	"${L4T_ROOTFS_DIR}/etc/apt/keyrings/theofficialgman-L4T.asc"
+case "$IMAGE_TYPE" in
+gnome-noble)
+status "Installing ubuntu.sources in rootfs"
+install --owner=root --group=root --mode=644 \
+	"${ROOT_DIR}/files/overwrite-files/noble/gnome/sources.list" \
+	"${L4T_ROOTFS_DIR}/etc/apt/sources.list"
+install --owner=root --group=root --mode=644 \
+	"${ROOT_DIR}/files/overwrite-files/noble/gnome/ubuntu.sources" \
+	"${L4T_ROOTFS_DIR}/etc/apt/sources.list.d/ubuntu.sources"
+;;
+esac
 pushd "${L4T_ROOTFS_DIR}"
-status "Registering theofficialgman-L4T OTA server key"
 case "$IMAGE_TYPE" in
 *-jammy)
 echo "deb [signed-by=/etc/apt/keyrings/theofficialgman-L4T.asc] https://theofficialgman.github.io/l4t-debs/ l4t jammy" > "${L4T_ROOTFS_DIR}/etc/apt/sources.list.d/theofficialgman-L4T.list"
@@ -302,7 +312,7 @@ LC_ALL=C chroot . apt install -y --no-install-recommends oem-config oem-config-g
 gnome*)
 # gnome
 LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-gnome --no-install-recommends totem-
-LC_ALL=C chroot . apt-mark auto switch-gnome
+#LC_ALL=C chroot . apt-mark auto switch-gnome
 ;;
 esac
 LC_ALL=C chroot . apt install -y chromium-browser
