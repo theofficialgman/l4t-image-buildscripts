@@ -69,12 +69,12 @@ sudo tar -xf ../files/rootfs/jammy/kubuntu-jammy-base-final.tar.gz -C rootfs
 kde-noble)
 # kde
 sudo mkdir rootfs
-sudo tar -xf ../files/rootfs/noble/kubuntu-noble-base-prerelease.tar.gz -C rootfs
+sudo tar -xf ../files/rootfs/noble/kubuntu-desktop-noble.tar.gz -C rootfs
 ;;
 unity-noble)
 # unity
 sudo mkdir rootfs
-sudo tar -xf ../files/rootfs/noble/ubuntu-unity-noble-prerelease.tar.gz -C rootfs
+sudo tar -xf ../files/rootfs/noble/ubuntu-unity-desktop-noble.tar.gz -C rootfs
 ;;
 gnome-jammy)
 # gnome
