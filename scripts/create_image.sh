@@ -62,7 +62,7 @@ split -b4290772992 --numeric-suffixes=0 "l4t.ext4.img" "l4t."
 sync
 
 distro_name=$(echo "$1" | awk -F- '{print $NF}')
-status "Creating L4T-$distro_name-image.7z"
+status "Creating L4T-$1-image.7z"
 rm -rf L4T-image
 sudo -u "$SUDO_USER" mkdir L4T-image
 cd L4T-image
@@ -72,7 +72,7 @@ sudo -u "$SUDO_USER" cp ../rootfs/opt/switchroot/L4T-$distro_name.ini bootloader
 sudo -u "$SUDO_USER" mv ../l4t.0* switchroot/install/ || error "Failed to copy image files"
 chown -R "$SUDO_USER":"$SUDO_USER" ./*
 sync
-sudo -u "$SUDO_USER" 7z a ../"L4T-$distro_name-image.7z" ./* || error "Failed to create L4T-$distro_name-image.7z"
+sudo -u "$SUDO_USER" 7z a ../"L4T-$1-image.7z" ./* || error "Failed to create L4T-$1-image.7z"
 
 
 status_green "Image creation finished!"
