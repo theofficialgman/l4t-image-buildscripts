@@ -85,8 +85,8 @@ function AddDebsList {
 			pre_deb_list+=("${L4T_TARGET_DEB_DIR}/${category}/${deb_name}")
 		elif [[ "${deb_name}" == "switch-joystick"* ]] || [[ "${deb_name}" == "nintendo-switch-meta"* ]] || [[ "${deb_name}" == "switch-bsp"* ]]; then
 			post_deb_list+=("${L4T_TARGET_DEB_DIR}/${category}/${deb_name}")
-		elif [[ "${deb_name}" == "joycond"* ]]; then
-			unpack_deb_list+=("${L4T_TARGET_DEB_DIR}/${category}/${deb_name}")
+		# elif [[ "${deb_name}" == "joycond"* ]]; then
+		# 	unpack_deb_list+=("${L4T_TARGET_DEB_DIR}/${category}/${deb_name}")
 		elif [[ "${deb_name}" == "xserver-"* ]]; then
 			downgrade_deb_list+=("${L4T_TARGET_DEB_DIR}/${category}/${deb_name}")
 		else
@@ -155,7 +155,7 @@ mkdir -p "${L4T_ROOTFS_DIR}/etc/apport/blacklist.d"
 # deb_list
 pre_deb_list=()
 deb_list=()
-unpack_deb_list=()
+# unpack_deb_list=()
 post_deb_list=()
 downgrade_deb_list=()
 
@@ -351,8 +351,8 @@ LC_ALL=C chroot . mount -t proc none /proc
 LC_ALL=C chroot . apt-mark auto feh onboard openbox
 umount ${L4T_ROOTFS_DIR}/proc
 
-# install packages without configuration
-LC_ALL=C chroot . dpkg --unpack --path-include="/usr/share/doc/*" "${unpack_deb_list[@]}"
+# # install packages without configuration
+# LC_ALL=C chroot . dpkg --unpack --path-include="/usr/share/doc/*" "${unpack_deb_list[@]}"
 
 rm -f "${L4T_ROOTFS_DEB_DIR}/.nv-l4t-disable-boot-fw-update-in-preinstall"
 
