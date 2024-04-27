@@ -313,6 +313,14 @@ LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-gnome 
 ;;
 esac
 LC_ALL=C chroot . apt install -y chromium-browser
+
+case "$IMAGE_TYPE" in
+*-noble)
+# downgrade plymouth on noble to version in theofficialgman repo
+LC_ALL=C chroot . apt install --only-upgrade --allow-downgrades -y libplymouth-dev=22.02.122-3ubuntu2 libplymouth5=22.02.122-3ubuntu2 plymouth-label-ft=22.02.122-3ubuntu2 plymouth-label=22.02.122-3ubuntu2 plymouth-theme-spinner=22.02.122-3ubuntu2 plymouth-theme-ubuntu-text=22.02.122-3ubuntu2 plymouth-themes=22.02.122-3ubuntu2 plymouth-x11=22.02.122-3ubuntu2 plymouth=22.02.122-3ubuntu2
+;;
+esac
+
 sleep 10
 umount ${L4T_ROOTFS_DIR}/proc
 umount ${L4T_ROOTFS_DIR}/sys
