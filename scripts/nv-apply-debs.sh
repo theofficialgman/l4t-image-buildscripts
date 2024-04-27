@@ -263,7 +263,7 @@ LC_ALL=C chroot . mount -t proc none /proc
 case "$IMAGE_TYPE" in
 kde*)
 # kde
-LC_ALL=C chroot . apt purge --autoremove -y unattended-upgrades snapd grub-efi-*
+LC_ALL=C chroot . apt purge --autoremove -y kubuntu-installer-prompt unattended-upgrades snapd grub-efi-*
 ;;
 unity*)
 # kde
