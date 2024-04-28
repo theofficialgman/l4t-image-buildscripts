@@ -255,11 +255,14 @@ popd
 pushd "${L4T_ROOTFS_DIR}"
 touch "${L4T_ROOTFS_DEB_DIR}/.nv-l4t-disable-boot-fw-update-in-preinstall"
 
-status "Removing packages"
-# openbox openbox-menu libmenu-cache3 libobt2v5 libimlib2 libobrender32v5 libfm-extra4 libgif7 libid3tag0 libmenu-cache-bin 
-LC_ALL=C chroot . dpkg --purge  fwupd-signed fwupdate fwupdate-signed
-LC_ALL=C chroot . dpkg --remove fwupd
+# creating mounts needed for apt
 LC_ALL=C chroot . mount -t proc none /proc
+mount /sys ./sys -o bind
+mount /dev ./dev -o bind
+mount /dev/pts ./dev/pts -o bind
+
+status "Removing packages"
+LC_ALL=C chroot . apt purge --autoremove -y calamares fwupd-signed fwupdate fwupdate-signed
 case "$IMAGE_TYPE" in
 kde*)
 # kde
@@ -278,13 +281,8 @@ gnome-noble)
 LC_ALL=C chroot . apt purge --autoremove -y linux-image-*-raspi linux-modules-*-raspi linux-headers-*-raspi linux-firmware-raspi* u-boot-rpi ubuntu-desktop-raspi linux-image-raspi linux-raspi linux-headers-raspi pi-bluetooth unattended-upgrades snapd cloud-init
 ;;
 esac
-umount ${L4T_ROOTFS_DIR}/proc
 
 status "Fully upgrade image and install additional dependencies from ubuntu repos"
-LC_ALL=C chroot . mount -t proc none /proc
-mount /sys ./sys -o bind
-mount /dev ./dev -o bind
-mount /dev/pts ./dev/pts -o bind
 LC_ALL=C chroot . apt update
 LC_ALL=C chroot . apt upgrade -y
 #FIXME: gir1.2-appindicator3-0.1 should be in switch-* (appropriate DE) package if needed
