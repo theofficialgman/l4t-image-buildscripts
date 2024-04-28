@@ -90,7 +90,7 @@ gnome-noble)
 # gnome
 rm -rf /tmp/rootfs-mount
 mkdir -p /tmp/rootfs-mount
-loopdev=$(sudo losetup -f --show -P ../files/rootfs/noble/noble-preinstalled-desktop-arm64+raspi.img)
+loopdev=$(sudo losetup -f --show -P ../files/rootfs/noble/ubuntu-24.04-preinstalled-desktop-arm64+raspi.img)
 sudo mount ${loopdev}p2 /tmp/rootfs-mount
 sudo cp -rp /tmp/rootfs-mount rootfs
 sudo umount /tmp/rootfs-mount
