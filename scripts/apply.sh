@@ -55,9 +55,11 @@ elif [[ "$1" == "unity-noble" ]]; then
 elif [[ "$1" == "experiment" ]]; then
   export IMAGE_TYPE=experiment
   status "experiment image creation selected."
-else
+elif [[ -z ${1+x} ]]; then
   export IMAGE_TYPE=gnome-jammy
-  status "No option specified, defaulting to GNOME image creation."
+  status "No option specified, defaulting to GNOME image creation."  
+else
+  error "Invalid option specified. The supported inputs are: kde-jammy, kde-noble, gnome-jammy, gnome-noble, and unity-noble"
 fi
 
 case "$IMAGE_TYPE" in
