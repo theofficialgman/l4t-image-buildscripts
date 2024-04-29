@@ -297,17 +297,17 @@ kde*)
 # LC_ALL=C chroot . apt update
 # LC_ALL=C DEBIAN_FRONTEND=noninteractive chroot . apt dist-upgrade -y
 
-LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-kde --no-install-recommends gnome-software- plasma-discover-backend-fwupd-
+LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-kde switch-multimedia --no-install-recommends gnome-software- plasma-discover-backend-fwupd-
 LC_ALL=C chroot . apt install -y --no-install-recommends oem-config oem-config-kde
 ;;
 unity*)
 # unity
-LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-unity --no-install-recommends
+LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-unity switch-multimedia --no-install-recommends
 LC_ALL=C chroot . apt install -y --no-install-recommends oem-config oem-config-gtk
 ;;
 gnome*)
 # gnome
-LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-gnome --no-install-recommends totem-
+LC_ALL=C chroot . apt install -y --autoremove nintendo-switch-meta switch-gnome switch-multimedia --no-install-recommends totem-
 ;;
 esac
 LC_ALL=C chroot . apt install -y chromium-browser
