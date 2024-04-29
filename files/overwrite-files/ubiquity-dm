@@ -697,6 +697,7 @@ EndSection
                             stdin=null, stdout=logfile, stderr=logfile,
                             preexec_fn=self.drop_privileges))
         elif self.frontend == 'kde_ui':
+            accessibility = True
             # Force Qt5 KDE theming to load for kwin and friends.
             os.environ["QT_QPA_PLATFORMTHEME"] = "kde"
             if 'access=v1' not in proc_cmdline:
@@ -718,6 +719,22 @@ EndSection
             wm = subprocess.Popen(
                 wm_cmd, stdin=null, stdout=logfile, stderr=logfile,
                 preexec_fn=self.drop_privileges)
+
+            if accessibility:
+                # FIXME: launch onboard, when touch screen detected
+                if 'access=m2' in proc_cmdline:
+                    if osextras.find_on_path('onboard'):
+                        extras.append(subprocess.Popen(
+                            ['onboard'],
+                            stdin=null, stdout=logfile, stderr=logfile,
+                            preexec_fn=self.drop_privileges))
+                else:
+                    if osextras.find_on_path('orca'):
+                        time.sleep(15)
+                        extras.append(subprocess.Popen(
+                            ['orca'],
+                            stdin=null, stdout=logfile, stderr=logfile,
+                            preexec_fn=self.drop_privileges))
 
         log('start greeter')
         greeter = subprocess.Popen(
