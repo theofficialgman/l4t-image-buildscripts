@@ -266,7 +266,7 @@ LC_ALL=C chroot . apt purge --autoremove -y calamares fwupd-signed fwupdate
 case "$IMAGE_TYPE" in
 kde*)
 # kde
-LC_ALL=C chroot . apt purge --autoremove -y kubuntu-installer-prompt unattended-upgrades snapd grub-efi-*
+LC_ALL=C chroot . apt purge --autoremove -y unattended-upgrades snapd grub-efi-*
 ;;
 unity*)
 # kde
