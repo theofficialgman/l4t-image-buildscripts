@@ -262,7 +262,7 @@ mount /dev ./dev -o bind
 mount /dev/pts ./dev/pts -o bind
 
 status "Removing packages"
-LC_ALL=C chroot . apt purge --autoremove -y calamares fwupd-signed fwupdate fwupdate-signed
+LC_ALL=C chroot . apt purge --autoremove -y calamares fwupd-signed fwupdate
 case "$IMAGE_TYPE" in
 kde*)
 # kde
