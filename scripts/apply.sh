@@ -122,6 +122,13 @@ sudo cp "$ROOT_DIR"/files/overwrite-files/ubiquity-dm "$OUTPUT_DIR"/rootfs/usr/b
 sudo rm "$OUTPUT_DIR"/rootfs/usr/share/xsessions/openbox.desktop
 sudo cp "$ROOT_DIR"/files/overwrite-files/nv-oem-config-post.sh "$OUTPUT_DIR"/rootfs/etc/systemd/nv-oem-config-post.sh
 
+case "$IMAGE_TYPE" in
+unity-noble)
+# remove icon requirement that causes oem-config-remove-gtk to fail
+sudo sed -i 's/^    apt_dialog.set_icon(theme.load_icon("update-manager", 16, 0))/#    apt_dialog.set_icon(theme.load_icon("update-manager", 16, 0))/g'  "$OUTPUT_DIR"/rootfs/usr/sbin/oem-config-remove-gtk
+;;
+esac
+
 #FIXME: these should be handled in packages
 sudo cp "$ROOT_DIR"/files/overwrite-files/custom.conf "$OUTPUT_DIR"/rootfs/etc/gdm3/custom.conf
 sudo ln -s /lib/systemd/system/iio-sensor-proxy.service "$OUTPUT_DIR"/rootfs/etc/systemd/system/multi-user.target.wants/iio-sensor-proxy.service
