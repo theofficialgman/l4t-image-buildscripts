@@ -141,6 +141,14 @@ function create_samplefs()
 	fi
 	sudo LC_ALL=C chroot . apt-get update
 
+	# unminimize the image
+	if [[ "${version}" == "noble" ]]; then
+		echo "Testing command"
+		sudo LC_ALL=C chroot . apt-get install -y unminimize
+		sudo LC_ALL=C chroot . unminimize
+		sudo LC_ALL=C chroot . apt-get purge -y unminimize
+	fi
+
 	package_list=$(cat "${package_list_file}")
 
 	if [ ! -z "${package_list}" ]; then
