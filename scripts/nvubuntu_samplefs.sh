@@ -74,7 +74,7 @@ function install_package()
 	while true
 	do
 		ret=0
-		sudo LC_ALL=C DEBIAN_FRONTEND=noninteractive chroot . apt-get -y --no-install-recommends --allow-downgrades install "${1}" || ret=$?
+		LC_ALL=C DEBIAN_FRONTEND=noninteractive chroot . apt-get -y --no-install-recommends --allow-downgrades install "${1}" || ret=$?
 		if [ "${ret}" == "0" ]; then
 			return 0
 		else
@@ -98,7 +98,7 @@ function install_packages()
 	while true
 	do
 		ret=0
-		echo "${1}" | xargs sudo LC_ALL=C DEBIAN_FRONTEND=noninteractive chroot . apt-get -y --no-install-recommends --allow-downgrades install || ret=$?
+		echo "${1}" | LC_ALL=C DEBIAN_FRONTEND=noninteractive xargs chroot . apt-get -y --no-install-recommends --allow-downgrades install || ret=$?
 		if [ "${ret}" == "0" ]; then
 			return 0
 		else
@@ -132,21 +132,21 @@ function create_samplefs()
 	mount /dev/pts ./dev/pts -o bind
 
 	if [ -s etc/resolv.conf ]; then
-		sudo mv etc/resolv.conf etc/resolv.conf.saved
+		mv etc/resolv.conf etc/resolv.conf.saved
 	fi
 	if [ -e "/run/resolvconf/resolv.conf" ]; then
-		sudo cp /run/resolvconf/resolv.conf etc/
+		cp /run/resolvconf/resolv.conf etc/
 	elif [ -e "/etc/resolv.conf" ]; then
-		sudo cp /etc/resolv.conf etc/
+		cp /etc/resolv.conf etc/
 	fi
-	sudo LC_ALL=C chroot . apt-get update
+	LC_ALL=C chroot . apt-get update
 
 	# unminimize the image
 	if [[ "${version}" == "noble" ]]; then
 		echo "Testing command"
-		sudo LC_ALL=C chroot . apt-get install -y unminimize
-		sudo LC_ALL=C chroot . unminimize
-		sudo LC_ALL=C chroot . apt-get purge -y unminimize
+		LC_ALL=C chroot . apt-get install -y unminimize
+		LC_ALL=C chroot . unminimize
+		LC_ALL=C chroot . apt-get purge -y unminimize
 	fi
 
 	package_list=$(cat "${package_list_file}")
@@ -157,15 +157,15 @@ function create_samplefs()
 		fi
 	fi
 
-	sudo LC_ALL=C chroot . sync
-	sudo LC_ALL=C chroot . apt-get clean
+	LC_ALL=C chroot . sync
+	LC_ALL=C chroot . apt-get clean
 	# mark packages as manually installed that can be
 	# this requires the livecd-rootfs package to be installed on the host
-	sudo /usr/share/livecd-rootfs/minimize-manual . || true
-	sudo LC_ALL=C chroot . sync
+	/usr/share/livecd-rootfs/minimize-manual . || true
+	LC_ALL=C chroot . sync
 
 	if [ -s etc/resolv.conf.saved ]; then
-		sudo mv etc/resolv.conf.saved etc/resolv.conf
+		mv etc/resolv.conf.saved etc/resolv.conf
 	fi
 
 	umount ./sys
