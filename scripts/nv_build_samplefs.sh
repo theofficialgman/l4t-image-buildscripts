@@ -187,8 +187,7 @@ function save_samplefs()
 	echo "${script_name} - save_samplefs"
 
 	pushd "${tmpdir}" > /dev/null 2>&1
-	# sudo tar --numeric-owner -jcpf "${output_samplefs}" *
-	sudo tar -czvf "${output_samplefs}" *
+	tar --xattrs -czvf "${output_samplefs}" *
 	sync
 	popd > /dev/null
 	rm -rf "${tmpdir}"
