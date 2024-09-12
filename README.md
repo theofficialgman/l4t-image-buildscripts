@@ -4,13 +4,10 @@ This repo contains the buildscripts used to create Switchroot L4T Ubuntu Noble a
 
 There are two steps to creating the images. First you need a clean ubuntu rootfs. Ubuntu (GNOME) ARM64 images for the Raspberry Pi from Ubuntu are available and are used instead of creating a ubuntu rootfs from scratch. Kubuntu and Ubuntu-Unity ARM64 rootfs do not exist and must be created from scratch. Next you create a hekate installable `7z` image with the custom switchroot packages added to the rootfs. The following are instructions for running two scripts that automate these processes.
 
-If you do not want to create a Kubuntu or Ubuntu-Unity rootfs from scratch you can download one that I have created from https://github.com/theofficialgman/l4t-image-buildscripts/releases/tag/rootfs-assets<br />
-Download the corresponding rootfs to the `files/rootfs/noble` folder to create Kubuntu Noble and Ubuntu-Unity Noble images.
-
-If you want to create a Kubuntu or Ubuntu-Unity rootfs from scratch then then the following script can be run as such:
+To create a Kubuntu or Ubuntu-Unity rootfs from scratch run the following script:
 `sudo ./scripts/nv_build_samplefs.sh --abi aarch64 --distro ubuntu --flavor kubuntu-desktop --version noble`<br />
-the possible input for flavor is `kubuntu-desktop` and `ubuntu-unity-desktop`<br />
-the possible input for version is `noble` and `jammy`<br />
+the possible input for flavor is `kubuntu-desktop` and `ubuntu-unity-desktop` (noble only)<br />
+the possible input for version is `noble` and `jammy` <br />
 the script operates in the `output` folder of the root folder of this repo and that is where you will find the `tar.gz` rootfs when completed. Move that file into the `files/rootfs/noble` or `files/rootfs/jammy` for use in creating the `7z` image in the next step.
 
 Ubuntu (GNOME) images are created starting with the official raspberry pi preinstalled image files.<br />
