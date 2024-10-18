@@ -262,23 +262,30 @@ mount /dev ./dev -o bind
 mount /dev/pts ./dev/pts -o bind
 
 status "Removing packages"
-LC_ALL=C chroot . apt purge --autoremove -y calamares fwupd-signed fwupdate
+case "$IMAGE_TYPE" in
+*jammy)
+LC_ALL=C chroot . apt purge --autoremove -y fwupd-signed fwupdate unattended-upgrades snapd
+;;
+*noble)
+LC_ALL=C chroot . apt purge --autoremove -y calamares fwupd-signed fwupdate unattended-upgrades snapd
+;;
+esac
 case "$IMAGE_TYPE" in
 kde*)
 # kde
-LC_ALL=C chroot . apt purge --autoremove -y unattended-upgrades snapd grub-efi-*
+LC_ALL=C chroot . apt purge --autoremove -y grub-efi-*
 ;;
 unity*)
 # kde
-LC_ALL=C chroot . apt purge --autoremove -y unattended-upgrades snapd grub-efi-*
+LC_ALL=C chroot . apt purge --autoremove -y grub-efi-*
 ;;
 gnome-jammy)
 # gnome jammy
-LC_ALL=C chroot . apt purge --autoremove -y linux-image-*-raspi linux-modules-*-raspi linux-headers-*-raspi linux-firmware-raspi* u-boot-rpi ubuntu-desktop-raspi linux-image-raspi linux-raspi linux-headers-raspi pi-bluetooth unattended-upgrades snapd
+LC_ALL=C chroot . apt purge --autoremove -y linux-image-*-raspi linux-modules-*-raspi linux-headers-*-raspi linux-firmware-raspi* u-boot-rpi ubuntu-desktop-raspi linux-image-raspi linux-raspi linux-headers-raspi pi-bluetooth
 ;;
 gnome-noble)
 # gnome noble
-LC_ALL=C chroot . apt purge --autoremove -y linux-image-*-raspi linux-modules-*-raspi linux-headers-*-raspi linux-firmware-raspi* u-boot-rpi ubuntu-desktop-raspi linux-image-raspi linux-raspi linux-headers-raspi pi-bluetooth unattended-upgrades snapd cloud-init
+LC_ALL=C chroot . apt purge --autoremove -y linux-image-*-raspi linux-modules-*-raspi linux-headers-*-raspi linux-firmware-raspi* u-boot-rpi ubuntu-desktop-raspi linux-image-raspi linux-raspi linux-headers-raspi pi-bluetooth cloud-init
 ;;
 esac
 
