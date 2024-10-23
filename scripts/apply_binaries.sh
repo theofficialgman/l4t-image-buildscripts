@@ -276,15 +276,6 @@ if ( [ ! -e "${LDK_ROOTFS_DIR}/etc/systemd/system/default.target" ] && [ -d "${L
 		"${LDK_ROOTFS_DIR}/etc/adduser.conf"
 fi
 
-if [ -d "${LDK_ROOTFS_DIR}/etc/gdm3/" ] || \
-	[ -e "${LDK_ROOTFS_DIR}/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf" ]; then
-	pushd "${LDK_ROOTFS_DIR}/etc/systemd/system/multi-user.target.wants" > /dev/null 2>&1
-	if [ -f "${LDK_ROOTFS_DIR}/etc/systemd/system/nvpmodel.service" ]; then
-		ln -sf "../nvpmodel.service" "nvpmodel.service"
-	fi
-	popd > /dev/null 2>&1
-fi
-
 if [ -e "${LDK_ROOTFS_DIR}/etc/gdm3/custom.conf" ]; then
 	sed -i "/WaylandEnable=false/ s/^#//" "${LDK_ROOTFS_DIR}/etc/gdm3/custom.conf"
 fi
